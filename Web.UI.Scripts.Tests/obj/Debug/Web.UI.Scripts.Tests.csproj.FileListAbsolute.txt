@@ -1,0 +1,7 @@
+D:\Git\OdinPlus\Source\OdinPlus\bin\Web.UI.Scripts.Tests.dll
+D:\Git\OdinPlus\Source\OdinPlus\bin\Web.UI.Scripts.Tests.pdb
+D:\Git\OdinPlus\Source\OdinPlus\Web.UI.Scripts.Tests\obj\Debug\Web.UI.Scripts.Tests.dll
+D:\Git\OdinPlus\Source\OdinPlus\Web.UI.Scripts.Tests\obj\Debug\Web.UI.Scripts.Tests.pdb
+D:\Git\OdinPlus\Source\OdinPlus\Web.UI.Scripts.Tests\bin\Web.UI.Scripts.Tests.dll
+D:\Git\OdinPlus\Source\OdinPlus\Web.UI.Scripts.Tests\bin\Web.UI.Scripts.Tests.pdb
+D:\Git\OdinPlus\Source\OdinPlus\Web.UI.Scripts.Tests\obj\Debug\Web.UI.Scripts.Tests.csprojResolveAssemblyReference.cache
