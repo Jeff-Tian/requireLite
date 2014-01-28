@@ -5,14 +5,14 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "requireLite", ".", "{AE255A
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/requireLite"
-		Debug.AspNetCompiler.PhysicalPath = "D:\Github\requireLite\"
+		Debug.AspNetCompiler.PhysicalPath = "..\requireLite\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\requireLite\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/requireLite"
-		Release.AspNetCompiler.PhysicalPath = "D:\Github\requireLite\"
+		Release.AspNetCompiler.PhysicalPath = "..\requireLite\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\requireLite\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
@@ -21,13 +21,22 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "requireLite", ".", "{AE255A
 		VWDPort = "21039"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.UI.Scripts.Tests", "Web.UI.Scripts.Tests\Web.UI.Scripts.Tests.csproj", "{ACB45CFD-EF2C-4AE3-BFCD-02F931F9D50C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AE255A2F-7623-4657-812C-6C819ACD6A75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AE255A2F-7623-4657-812C-6C819ACD6A75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE255A2F-7623-4657-812C-6C819ACD6A75}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE255A2F-7623-4657-812C-6C819ACD6A75}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{ACB45CFD-EF2C-4AE3-BFCD-02F931F9D50C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACB45CFD-EF2C-4AE3-BFCD-02F931F9D50C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACB45CFD-EF2C-4AE3-BFCD-02F931F9D50C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACB45CFD-EF2C-4AE3-BFCD-02F931F9D50C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
