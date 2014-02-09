@@ -1,7 +1,14 @@
 ﻿;
-(function() {
+(function () {
+    var getScriptUrl = (function () {
+        var scripts = document.getElementsByTagName('script');
+        var index = scripts.length - 1;
+        var myScript = scripts[index];
+        return function () { return myScript.src; };
+    })();
+
     if (!window.requireLite) {
-        
+
         function getModuleNameFromPath(path) {
             /// <summary>
             /// 
@@ -30,10 +37,10 @@
 
             return moduleName.replace(".min", "").replace(".dev", "").replace("-vsdoc", "");
         }
-        
+
         function getModule(moduleObj) {
             var module = null;
-            
+
             if ((typeof moduleObj === "string") && moduleObj !== "") {
                 module = {
                     name: getModuleNameFromPath(moduleObj),
@@ -47,14 +54,21 @@
                             path: moduleObj.path
                         };
                     }
-                } catch(ex) {
+                } catch (ex) {
                     module = null;
                 }
             }
 
+            // Converts relative path to absolute path
+            if (!/((http|ftp|https):)?\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/.test(module.path)) {
+                var myUrl = getScriptUrl();
+                var myDir = myUrl.substring(0, myUrl.lastIndexOf("/") + 1);
+                module.path = myDir + module.path;
+            }
+
             return module;
         }
-        
+
         function hasBeenLoadedAlready(moduleObj) {
             /// <summary>
             /// Detect if a module has been loaded already
@@ -66,23 +80,23 @@
             /// <returns type="Boolean">
             /// </returns>
             var m = getModule(moduleObj);
-            
+
             if (m === null) {
                 throw "Invalid argument 'moduleObj'. Expected: <An object or a string>; Actual: <" + moduleObj + ">";
             }
-            
+
             try {
                 var module = eval(m.name);
 
-                return typeof module !== "undefined";
-            } catch(ex) {
+                return typeof module !== "undefined" && module !== false;
+            } catch (ex) {
                 return false;
             }
         }
 
         function loadScript(path, callback) {
             var module = getModule(path);
-            
+
             if (module === null) {
                 throw "The argument 'path' is not valid. Expect: <a valid script path> or <an object: {path: 'a valid script path', name: 'module name'}>; Actual: <" + path + ">";
             }
@@ -110,14 +124,14 @@
 
         function getCallback(paths, finalCallback) {
             if ((paths instanceof Array) && paths.length > 0) {
-                return function() { loadScripts(paths, finalCallback); };
+                return function () { loadScripts(paths, finalCallback); };
             } else {
                 return finalCallback;
             }
         }
 
         function requireLite(dependentScriptPaths, callback) {
-            
+
             if (typeof dependentScriptPaths === "string") {
                 dependentScriptPaths = [dependentScriptPaths];
             }
@@ -132,7 +146,7 @@
         }
 
         window.requireLite = requireLite;
-        window.requireLiteHelper = {            
+        window.requireLiteHelper = {
             getModuleNameFromPath: getModuleNameFromPath,
             hasBeenLoadedAlready: hasBeenLoadedAlready
         };
