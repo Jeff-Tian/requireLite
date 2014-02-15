@@ -48,15 +48,21 @@
                 };
             } else if ((typeof moduleObj === "object") && moduleObj !== null) {
                 try {
-                    if (moduleObj.canary.length > 0 && moduleObj.path.length > 0) {
+                    if (((typeof moduleObj.canary === "string" && moduleObj.canary.length > 0)
+                            || (typeof moduleObj.canary === "function"))
+                        && (typeof moduleObj.path === "string" && moduleObj.path.length > 0)) {
                         module = {
                             canary: moduleObj.canary,
                             path: moduleObj.path
                         };
+                    } else {
+                        throw "argument 'moduleObj' should contain both valid canary property and path property.";
                     }
                 } catch (ex) {
                     throw ex;
                 }
+            } else {
+                throw "argument 'moduleObj' should be a string or an object.";
             }
 
             // Converts relative path to absolute path
@@ -86,10 +92,17 @@
             }
 
             try {
-                var module = eval(m.canary);
+                if (typeof m.canary === "string") {
+                    var loaded = eval(m.canary);
 
-                return typeof module !== "undefined" && module !== false;
+                    return typeof loaded !== "undefined" && loaded !== false;
+                } else if (typeof m.canary === "function") {
+                    return !!m.canary();
+                } else {
+                    throw "the property 'canary' should be an expression (string) or a bool function.";
+                }
             } catch (ex) {
+                //throw ex;
                 return false;
             }
         }

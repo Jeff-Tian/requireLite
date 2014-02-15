@@ -11,6 +11,7 @@ describe("requireLite helper test suite", function () {
     it("Spec: Can detect if a module has been loaded already", function() {
         expect(requireLiteHelper.hasBeenLoadedAlready("window")).toBe(true);
         expect(requireLiteHelper.hasBeenLoadedAlready("not.loaded")).toBe(false);
+        expect(requireLiteHelper.hasBeenLoadedAlready("$")).toBe(false);
     });
 });
 

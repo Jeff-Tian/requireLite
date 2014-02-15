@@ -24,6 +24,22 @@ Lite version of require JS?
                                         alert("jquery loaded!");
                                         $("<p><strong>jquery loaded!</strong></p>").appendTo("body");
                                 });
+		    
+						requireLite([{
+							path: "http://code.jquery.com/jquery-1.8.3.min.js",
+							canary: "typeof jQuery !=== 'undefined'"
+						}], function () {
+							alert("jquery loaded!");
+							$("<p><strong>jquery loaded!</strong></p>").appendTo("body");
+						});
+		    
+						requireLite([{
+							path: "http://code.jquery.com/jquery-1.8.3.min.js",
+							canary: function () { return !!$; }
+						}], function () {
+							alert("jquery loaded!");
+							$("<p><strong>jquery loaded!</strong></p>").appendTo("body");
+						});
                 })();
         </script>
 </body>
