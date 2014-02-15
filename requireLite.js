@@ -1,4 +1,5 @@
-﻿(function () {
+﻿;
+(function () {
     var getScriptUrl = (function () {
         var scripts = document.getElementsByTagName('script');
         var index = scripts.length - 1;
@@ -106,7 +107,19 @@
                 script.src = module.path;
                 script.type = "text/javascript";
                 if (typeof callback === "function") {
-                    script.onload = callback;
+                    // Attach handlers for all browsers
+                    var done = false;
+                    script.onload = script.onreadystatechange = function () {
+                        if (!done && (!this.readyState ||
+                                this.readyState === "loaded" || this.readyState === "complete")) {
+                            done = true;
+
+                            callback();
+
+                            // Handle memory leak in IE
+                            script.onload = script.onreadystatechange = null;
+                        }
+                    };
                 }
 
                 (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(script);
@@ -144,10 +157,10 @@
             loadScripts(paths, callback);
         }
 
-        requireLite.version = "1.1";
+        requireLite.version = "1.2";
 
         window.requireLite = requireLite;
-        
+
         // For unit testing only:
         window.requireLiteHelper = {
             getModuleNameFromPath: getModuleNameFromPath,
