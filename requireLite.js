@@ -1,5 +1,4 @@
-﻿;
-(function () {
+﻿(function () {
     var getScriptUrl = (function () {
         var scripts = document.getElementsByTagName('script');
         var index = scripts.length - 1;
@@ -43,19 +42,19 @@
 
             if ((typeof moduleObj === "string") && moduleObj !== "") {
                 module = {
-                    name: getModuleNameFromPath(moduleObj),
+                    canary: getModuleNameFromPath(moduleObj),
                     path: moduleObj
                 };
             } else if ((typeof moduleObj === "object") && moduleObj !== null) {
                 try {
-                    if (moduleObj.name.length > 0 && moduleObj.path.length > 0) {
+                    if (moduleObj.canary.length > 0 && moduleObj.path.length > 0) {
                         module = {
-                            name: moduleObj.name,
+                            canary: moduleObj.canary,
                             path: moduleObj.path
                         };
                     }
                 } catch (ex) {
-                    module = null;
+                    throw ex;
                 }
             }
 
@@ -86,7 +85,7 @@
             }
 
             try {
-                var module = eval(m.name);
+                var module = eval(m.canary);
 
                 return typeof module !== "undefined" && module !== false;
             } catch (ex) {
@@ -98,7 +97,7 @@
             var module = getModule(path);
 
             if (module === null) {
-                throw "The argument 'path' is not valid. Expect: <a valid script path> or <an object: {path: 'a valid script path', name: 'module name'}>; Actual: <" + path + ">";
+                throw "The argument 'path' is not valid. Expect: <a valid script path> or <an object: {path: 'a valid script path', canary: 'module name or a boolean expression'}>; Actual: <" + path + ">";
             }
 
             if (!hasBeenLoadedAlready(module)) {
@@ -137,7 +136,7 @@
             }
 
             if (!(dependentScriptPaths instanceof Array)) {
-                throw "Argument 'dependentScriptPaths' should be an array of strings or {path: 'module path', name: 'module name'}s.";
+                throw "Argument 'dependentScriptPaths' should be an array of strings or {path: 'module path', canary: 'module name or a boolean expression'}s.";
             }
 
             // Clone a copy of dependentScriptPaths
@@ -145,7 +144,11 @@
             loadScripts(paths, callback);
         }
 
+        requireLite.version = "1.1";
+
         window.requireLite = requireLite;
+        
+        // For unit testing only:
         window.requireLiteHelper = {
             getModuleNameFromPath: getModuleNameFromPath,
             hasBeenLoadedAlready: hasBeenLoadedAlready
