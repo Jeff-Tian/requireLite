@@ -45,3 +45,7 @@ Lite version of require JS?
 </body>
 </html>
 ```
+
+## FAQ:
+- Q: Can requireLite work well with JavaScript bundles?
+- A: Yes. It can go hand in hand with JavaScript bundles which involves server side technologies. Because rquireLite will only load js files that canary value is not true. When a javascript file has been already loaded in a JavaScript bundle, then its canary value will be true, and then the rquireLite would ignore that rquiring action.

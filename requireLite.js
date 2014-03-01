@@ -1,13 +1,49 @@
 ﻿;
 (function () {
-    var getScriptUrl = (function () {
-        var scripts = document.getElementsByTagName('script');
-        var index = scripts.length - 1;
-        var myScript = scripts[index];
-        return function () { return myScript.src; };
-    })();
-
     if (!window.requireLite) {
+
+        function getScriptUrl() {
+            var scripts = document.getElementsByTagName('script');
+            var index = scripts.length - 1;
+            var myScript = scripts[index];
+
+            return myScript.src;
+        }
+
+        window.executeOn = function (condition, func) {
+            var interval = setInterval(function () {
+                try {
+                    var result = false;
+
+                    if (typeof condition === "function") {
+                        result = condition();
+                    } else if (typeof condition === "string") {
+                        result = eval(condition);
+                    } else {
+                        throw "argument 'condition' must be a bool function or a bool expression.";
+                    }
+
+                    if (result === true) {
+                        clearInterval(interval);
+                        func();
+                    }
+                } catch (ex) {
+                    clearInterval(interval);
+                    throw ex;
+                }
+            }, 100);
+        };
+
+        window.executeCallback = function (callback, argsArray) {
+            if (typeof callback === "function") {
+                // IE doesn't support null as second argument of apply method.
+                callback.apply(window, argsArray || []);
+            } else if (callback instanceof Array) {
+                for (var i = 0; i < callback.length; i++) {
+                    (typeof callback[i] === "function") && callback[i].apply(window, argsArray || []);
+                }
+            }
+        };
 
         function getModuleNameFromPath(path) {
             /// <summary>
@@ -102,8 +138,17 @@
                     throw "the property 'canary' should be an expression (string) or a bool function.";
                 }
             } catch (ex) {
-                //throw ex;
-                return false;
+                if (ex instanceof ReferenceError && /.+ is not defined/i.test(ex.message)) {
+                    return false;
+                } else {
+                    function Exception(message, innerException) {
+                        this.message = message;
+
+                        this.innerException = innerException;
+                    }
+
+                    throw new Exception(ex.message + "\r\nRelated canary: " + m.canary, ex);
+                }
             }
         }
 
@@ -155,7 +200,26 @@
             }
         }
 
-        function requireLite(dependentScriptPaths, callback) {
+        function loadScriptsAsynchronously(paths, callback) {
+            var semaphore = 0;
+
+            for (var i = 0; i < paths.length; i++) {
+                var path = paths[i];
+
+                semaphore++;
+                loadScript(path, function () {
+                    semaphore--;
+                });
+            }
+
+            executeOn(function () {
+                return semaphore === 0;
+            }, function () {
+                executeCallback(callback);
+            });
+        }
+
+        function requireLite(dependentScriptPaths, callback, async) {
 
             if (typeof dependentScriptPaths === "string") {
                 dependentScriptPaths = [dependentScriptPaths];
@@ -167,10 +231,14 @@
 
             // Clone a copy of dependentScriptPaths
             var paths = dependentScriptPaths.slice(0);
-            loadScripts(paths, callback);
+            if (!async) {
+                loadScripts(paths, callback);
+            } else {
+                loadScriptsAsynchronously(paths, callback);
+            }
         }
 
-        requireLite.version = "1.2";
+        requireLite.version = "1.3";
 
         window.requireLite = requireLite;
 
