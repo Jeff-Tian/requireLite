@@ -1,15 +1,6 @@
 ﻿;
 (function () {
     if (!window.requireLite) {
-
-        function getScriptUrl() {
-            var scripts = document.getElementsByTagName('script');
-            var index = scripts.length - 1;
-            var myScript = scripts[index];
-
-            return myScript.src;
-        }
-
         window.executeOn = function (condition, func) {
             var interval = setInterval(function () {
                 try {
@@ -103,8 +94,7 @@
 
             // Converts relative path to absolute path
             if (!/((http|ftp|https):)?\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/.test(module.path)) {
-                var myUrl = getScriptUrl();
-                var myDir = myUrl.substring(0, myUrl.lastIndexOf("/") + 1);
+                var myDir = myScriptUrl.substring(0, myScriptUrl.lastIndexOf("/") + 1);
                 module.path = myDir + module.path;
             }
 
@@ -219,8 +209,18 @@
             });
         }
 
+        var myScriptUrl;
         function requireLite(dependentScriptPaths, callback, async) {
+            function getScriptUrl() {
+                var scripts = document.getElementsByTagName('script');
+                var index = scripts.length - 1;
+                var myScript = scripts[index];
 
+                return myScript.src;
+            }
+
+            myScriptUrl = getScriptUrl();
+            
             if (typeof dependentScriptPaths === "string") {
                 dependentScriptPaths = [dependentScriptPaths];
             }
