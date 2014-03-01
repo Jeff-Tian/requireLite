@@ -93,7 +93,7 @@
             }
 
             // Converts relative path to absolute path
-            if (!/((http|ftp|https):)?\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/.test(module.path)) {
+            if (!/((http|ftp|https):)?\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/.test(module.path) && !/^\/[^\/]+/.test(module.path)) {
                 var myDir = myScriptUrl.substring(0, myScriptUrl.lastIndexOf("/") + 1);
                 module.path = myDir + module.path;
             }
@@ -142,7 +142,7 @@
             }
         }
 
-        function loadScript(path, callback) {
+        function loadScript(path, callback, async) {
             var module = getModule(path);
 
             if (module === null) {
@@ -151,7 +151,7 @@
 
             if (!hasBeenLoadedAlready(module)) {
                 var script = document.createElement("script");
-                script.async = false;
+                script.async = !!async;
                 script.src = module.path;
                 script.type = "text/javascript";
                 if (typeof callback === "function") {
@@ -162,7 +162,9 @@
                                 this.readyState === "loaded" || this.readyState === "complete")) {
                             done = true;
 
+                            isInCallback = true;
                             callback();
+                            isInCallback = false;
 
                             // Handle memory leak in IE
                             script.onload = script.onreadystatechange = null;
@@ -173,18 +175,20 @@
                 (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(script);
             } else {
                 if (typeof callback === "function") {
+                    isInCallback = true;
                     callback();
+                    isInCallback = false;
                 }
             }
         }
 
-        function loadScripts(paths, callback) {
-            loadScript(paths.shift(), getCallback(paths, callback));
+        function loadScriptsSynchronously(paths, callback) {
+            loadScript(paths.shift(), getCallback(paths, callback), false);
         }
 
         function getCallback(paths, finalCallback) {
             if ((paths instanceof Array) && paths.length > 0) {
-                return function () { loadScripts(paths, finalCallback); };
+                return function () { loadScriptsSynchronously(paths, finalCallback); };
             } else {
                 return finalCallback;
             }
@@ -197,19 +201,29 @@
                 var path = paths[i];
 
                 semaphore++;
-                loadScript(path, function () {
+                loadScript(path, function() {
                     semaphore--;
-                });
+                }, true);
             }
 
             executeOn(function () {
                 return semaphore === 0;
             }, function () {
+                isInCallback = true;
                 executeCallback(callback);
+                isInCallback = false;
             });
         }
 
         var myScriptUrl;
+        var isInCallback = false;
+        /// <remark>
+        ///     Caution: If you invoke requireLite() from a callback, then the js file paths
+        ///     must be absolute paths! Or the requireLite() may have chance to request a wrong 
+        ///     url for the js files.
+        ///     i.e, in callback case, you can use http://zizhujy.com/test.js, or /Scripts/test.js, etc.
+        ///         you can't use ../../Scripts/test.js
+        /// </remark>
         function requireLite(dependentScriptPaths, callback, async) {
             function getScriptUrl() {
                 var scripts = document.getElementsByTagName('script');
@@ -219,7 +233,9 @@
                 return myScript.src;
             }
 
-            myScriptUrl = getScriptUrl();
+            if (!isInCallback) {
+                myScriptUrl = getScriptUrl();
+            }
             
             if (typeof dependentScriptPaths === "string") {
                 dependentScriptPaths = [dependentScriptPaths];
@@ -232,7 +248,7 @@
             // Clone a copy of dependentScriptPaths
             var paths = dependentScriptPaths.slice(0);
             if (!async) {
-                loadScripts(paths, callback);
+                loadScriptsSynchronously(paths, callback);
             } else {
                 loadScriptsAsynchronously(paths, callback);
             }

@@ -45,6 +45,12 @@ Lite version of require JS?
 </body>
 </html>
 ```
+## Caution: 
+If you invoke requireLite() from a callback, then the js file paths
+must be absolute paths! Or the requireLite() may have chance to request a wrong 
+url for the js files.
+i.e, in callback case, you can use http://zizhujy.com/test.js, or /Scripts/test.js, etc.
+you can't use ../../Scripts/test.js
 
 ## FAQ:
 - Q: Can requireLite work well with JavaScript bundles?
