@@ -104,7 +104,7 @@
             }
 
             // Converts relative path to absolute path
-            if (!/((http|ftp|https):)?\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/.test(module.path) && !/^\/[^\/]+/.test(module.path)) {
+            if (!/((ftp|http|https):)?\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(module.path)) {
                 var myDir = myScriptUrl.substring(0, myScriptUrl.lastIndexOf("/") + 1);
                 module.path = myDir + module.path;
             }
@@ -273,7 +273,7 @@
             }
         }
 
-        requireLite.version = "1.7";
+        requireLite.version = "1.8";
 
         window.requireLite = requireLite;
 
