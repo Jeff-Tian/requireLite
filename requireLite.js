@@ -43,7 +43,7 @@
 
             return myScript.src;
         };
-
+        
         function getModuleNameFromPath(path) {
             /// <summary>
             /// 
