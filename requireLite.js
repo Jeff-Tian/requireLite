@@ -274,7 +274,7 @@
         }
 
         requireLite.version = "1.8";
-
+        
         window.requireLite = requireLite;
 
         // For unit testing only:
