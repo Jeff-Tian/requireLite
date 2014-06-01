@@ -25,13 +25,18 @@
             }, 100);
         };
 
-        window.executeCallback = function (callback, argsArray) {
+        window.executeCallback = function () {
+            var callback = arguments[0];
+            
             if (typeof callback === "function") {
                 // IE doesn't support null as second argument of apply method.
-                callback.apply(window, argsArray || []);
+                var argsArray = arguments[1] || [];
+                var context = arguments[2] || window;
+                callback.apply(context, argsArray);
             } else if (callback instanceof Array) {
+                var context = arguments[1] || window;
                 for (var i = 0; i < callback.length; i++) {
-                    (typeof callback[i] === "function") && callback[i].apply(window, argsArray || []);
+                    (typeof callback[i] === "function") && callback[i].apply(context, []);
                 }
             }
         };
